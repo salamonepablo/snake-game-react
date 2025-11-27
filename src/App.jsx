@@ -32,6 +32,27 @@ function getRandomFoodPosition(snake) {
   }
 }
 
+function wrapCoordinate(value) {
+  if (value < 0) return BOARD_SIZE - 1
+  if (value >= BOARD_SIZE) return 0
+  return value
+}
+
+function getWrappedHeadPosition(head, direction) {
+  return {
+    x: wrapCoordinate(head.x + direction.x),
+    y: wrapCoordinate(head.y + direction.y),
+  }
+}
+
+function willCollideWithSelf(newHead, snake, willGrow) {
+  const bodyToCheck = willGrow ? snake : snake.slice(0, -1)
+
+  return bodyToCheck.some(
+    (segment) => segment.x === newHead.x && segment.y === newHead.y,
+  )
+}
+
 function App() {
   const [snake, setSnake] = useState(INITIAL_SNAKE)
   const [direction, setDirection] = useState(DIRECTIONS.ArrowRight)
@@ -80,35 +101,27 @@ function App() {
     const intervalId = setInterval(() => {
       setSnake((previousSnake) => {
         const head = previousSnake[0]
-        const newHead = {
-          x: head.x + direction.x,
-          y: head.y + direction.y,
-        }
+        const wrappedHead = getWrappedHeadPosition(head, direction)
 
-        // Colisión con paredes
-        const hitWall =
-          newHead.x < 0 ||
-          newHead.x >= BOARD_SIZE ||
-          newHead.y < 0 ||
-          newHead.y >= BOARD_SIZE
+        const hasEatenFood =
+          wrappedHead.x === food.x && wrappedHead.y === food.y
 
-        // Colisión con el propio cuerpo
-        const hitSelf = previousSnake.some(
-          (segment) => segment.x === newHead.x && segment.y === newHead.y,
+        const hitSelf = willCollideWithSelf(
+          wrappedHead,
+          previousSnake,
+          hasEatenFood,
         )
 
-        if (hitWall || hitSelf) {
+        if (hitSelf) {
           setIsGameOver(true)
           return previousSnake
         }
 
-        const hasEatenFood = newHead.x === food.x && newHead.y === food.y
+        const newSnake = hasEatenFood
+          ? [wrappedHead, ...previousSnake]
+          : [wrappedHead, ...previousSnake.slice(0, -1)]
 
-        const newSnake = [newHead, ...previousSnake]
-
-        if (!hasEatenFood) {
-          newSnake.pop()
-        } else {
+        if (hasEatenFood) {
           setScore((current) => current + 1)
           setFood(getRandomFoodPosition(newSnake))
         }

@@ -1,16 +1,44 @@
-# React + Vite
+# Snake Game React
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Juego clásico de **Snake** implementado con **React** y **Vite**.
 
-Currently, two official plugins are available:
+La aplicación se ejecuta en el navegador y muestra un tablero de 20x20 celdas donde controlas una serpiente que va creciendo al comer comida.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Reglas del juego
 
-## React Compiler
+- El tablero es una grilla de **20 x 20**.
+- Controlas la dirección de la serpiente.
+- Cada vez que comes comida:
+  - La serpiente crece una unidad.
+  - Aumenta el puntaje.
+- **Las paredes no causan colisión**:
+  - Si sales por un lado del tablero, **apareces por el lado opuesto** (wrap-around).
+- **Pierdes solo si chocas contra tu propio cuerpo**:
+  - Si la cabeza de la serpiente entra en una celda ocupada por otra parte de la serpiente, el juego termina.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Controles
 
-## Expanding the ESLint configuration
+- Moverse:
+  - Flechas del teclado: `↑`, `↓`, `←`, `→`
+  - o bien: `W`, `A`, `S`, `D`
+- Reiniciar cuando hay *Game Over*:
+  - Barra espaciadora (`Space`)
+  - o botón **Reiniciar** en el overlay.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Scripts disponibles
+
+En la raíz del proyecto:
+
+```bash
+npm install       # instala dependencias
+npm run dev       # arranca el servidor de desarrollo (Vite)
+npm run build     # genera el build de producción
+npm run preview   # sirve el build generado en dist
+npm run lint      # ejecuta ESLint sobre el proyecto
+```
+
+## Stack
+
+- [React](https://react.dev/) (con `useState` y `useEffect` para manejar el estado del juego).
+- [Vite](https://vite.dev/) como bundler y servidor de desarrollo.
+- [ESLint](https://eslint.org/) con configuración flat y reglas para React Hooks y React Refresh.
